@@ -1,87 +1,70 @@
-class TreeNode:
+class Node:
     def __init__(self, data):
         self.data = data
-        self.left = None
-        self.right = None
+        self.next = None
+        self.prev = None
 
-    def __str__(self):
-        return str(self.data) 
-
-class BinaryTree:
+class DoublyLinkedList:
     def __init__(self):
-        self.root = None
+        self.head = None
 
-    def insert(self, data):
-        if self.root is None:
-            self.root = TreeNode(data)
+    def append(self, data):
+        newnode = Node(data)
+        if not self.head:
+            self.head = newnode
         else:
-            self._insert_recursive(self.root, data)
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = newnode
+            newnode.prev = current
 
-    def _insert_recursive(self, node, data):
-        if data < node.data:
-            if node.left is None:
-                node.left = TreeNode(data)
-            else:
-                self._insert_recursive(node.left, data)
-        elif data > node.data:
-            if node.right is None:
-                node.right = TreeNode(data)
-            else:
-                self._insert_recursive(node.right, data)
+    def prepend(self, data):
+        newnode = Node(data)
+        if self.head:
+            newnode.next = self.head
+            self.head.prev = newnode
+        self.head = newnode
 
-    def search(self, data):
-        return self._search_recursive(self.root, data)
+    def delete(self, data):
+        current = self.head
+        while current:
+            if current.data == data:
+                if current.prev:
+                    current.prev.next = current.next
+                else:
+                    self.head = current.next
+                if current.next:
+                    current.next.prev = current.prev
+                return
+            current = current.next
 
-    def _search_recursive(self, node, data):
-        if node is None or node.data == data:
-            return node
+    def display(self):
+        current = self.head
+        while current:
+            print(current.data, end = "<->")
+            current = current.next
+        print("None")
 
-        if data < node.data:
-            return self._search_recursive(node.left, data)
-        else:
-            return self._search_recursive(node.right, data)
+    def display_reverse(self):
+        current = self.head
+        if not current:
+            return
+        while current.next:
+            current = current.next
+        while current:
+            current = current.prev
 
-    def in_order_traversal(self):
-        result = []
-        self._in_order_recursive(self.root, result)
-        return result
+dll = DoublyLinkedList()
+dll.append(1)
+dll.append(2)
+dll.append(3)
+dll.display()
 
-    def _in_order_recursive(self, node, result):
-        if node is not None:
-            self._in_order_recursive(node.left, result)
-            result.append(node.data)
-            self._in_order_recursive(node.right, result)
+dll.prepend(0)
+dll.display()
 
-    def pre_order_traversal(self):
-        result = []
-        self._pre_order_recursive(self.root, result)
-        return result
+dll.delete(2)
+dll.display()
 
-    def _pre_order_recursive(self, node, result):
-        if node is not None:
-            result.append(node.data)
-            self._pre_order_recursive(node.left, result)
-            self._pre_order_recursive(node.right, result)
-
-    def post_order_traversal(self):
-        result = []
-        self._post_order_recursive(self.root, result)
-        return result
-
-    def _post_order_recursive(self, node, result):
-        if node is not None:
-            self._post_order_recursive(node.left, result)
-            self._post_order_recursive(node.right, result)
-            result.append(node.data)
-
-tree = BinaryTree()
-tree.insert(10)
-tree.insert(5)
-tree.insert(15)
-
-print(tree.search(5))
-print(tree.search(20))
-
-print(tree.in_order_traversal())  # [5, 10, 15]
-print(tree.pre_order_traversal())  # [10, 5, 15]
-print(tree.post_order_traversal())  # [5, 15, 10]
+dll.display_reverse()
