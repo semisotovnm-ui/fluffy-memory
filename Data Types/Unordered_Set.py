@@ -1,87 +1,41 @@
-class KeyValuePair:
-    def __init__(self, key, value):
-        self.key = key
-        self.value = value
-
-
-class UnorderedMap:
+class UnorderedSet:
     def __init__(self, size=10):
         self.size = size
-        self.buckets = [[] for _ in range(size)]  
+        self.buckets = [[] for _ in range(size)]
 
-    def _hash(self, key):
-        if isinstance(key, str):
-            hash_value = sum(ord(char) for char in str(key))
-        else:
-            hash_value = hash(key)
-        return hash_value % self.size
+    def _hash(self, value):
+        return len(str(value)) % self.size
 
-    def set(self, key, value):
-        index = self._hash(key)
-        bucket = self.buckets[index]
+    def add(self, value):
+        x = self._hash(value)
+        y = self.buckets[x]
+        if value not in y:
+            y.append(value)
 
-        for pair in bucket:
-            if pair.key == key:
-                pair.value = value
-                return
+    def remove(self, value):
+        x = self._hash(value)
+        y = self.buckets[x]
+        if value in y:
+            y.remove(value)
 
-        bucket.append(KeyValuePair(key, value))
+    def contains(self, value):
+        x = self._hash(value)
+        y = self.buckets[x]
+        return value in y
 
-    def get(self, key, default=None):
-        index = self._hash(key)
-        bucket = self.buckets[index]
+    def elements(self):
+        elements2 = []
+        for y in self.buckets:
+            elements2.extend(y)
+        return elements2
 
-        for pair in bucket:
-            if pair.key == key:
-                return pair.value
-        return default
-
-    def remove(self, key):
-        index = self._hash(key)
-        bucket = self.buckets[index]
-
-        for i, pair in enumerate(bucket):
-            if pair.key == key:
-                del bucket[i]
-                return
-
-    def keys(self):
-        all_keys = []
-        for bucket in self.buckets:
-            for pair in bucket:
-                all_keys.append(pair.key)
-        return all_keys
-
-    def values(self):
-        all_values = []
-        for bucket in self.buckets:
-            for pair in bucket:
-                all_values.append(pair.value)
-        return all_values
-
-    def items(self):
-        all_items = []
-        for bucket in self.buckets:
-            for pair in bucket:
-                all_items.append((pair.key, pair.value))
-        return all_items
-
-
-my_map = UnorderedMap()
-
-my_map.set("name", "John")
-my_map.set("age", 25)
-my_map.set("city", "Example City")
-
-print("Keys:", my_map.keys())
-print("Values:", my_map.values())
-print("Items:", my_map.items())
-
-# Accessing values by key
-print("Name:", my_map.get("name"))
-print("Gender:", my_map.get("gender", "Not specified"))
-
-# Removing a key-value pair
-my_map.remove("age")
-
-print("Keys after removing 'age':", my_map.keys())
+my_set = UnorderedSet()
+my_set.add(1)
+my_set.add(2)
+my_set.add(3)
+print("Elements:", my_set.elements())
+value_to_check = 2
+print(f"Is {value_to_check} in the set? {my_set.contains(value_to_check)}")
+value_to_remove = 1
+my_set.remove(value_to_remove)
+print("Elements after removing 1:", my_set.elements())
